@@ -9,8 +9,11 @@ const {notfound,errorhandle}=require('./middlewares/errorhandler')
 const cookieparser=require("cookie-parser");
 const prodroute=require("./routes/prodroutes.js")
 const morgan=require("morgan");
-
-
+const blogroute=require("./routes/blogroutes");
+const prodcateroute=require("./routes/prodcategoryroutes");
+const blogcateroute=require("./routes/blogcateroute");
+const brandroute=require("./routes/brandroutes");
+const couponroute=require("./routes/couponroutes");
 
 db();
 app.use(morgan("dev"));
@@ -23,6 +26,11 @@ app.use(cookieparser());
 
 app.use("/api/user",authrouter);
 app.use("/api/product",prodroute);
+app.use("/api/blog",blogroute);
+app.use("/api/productcategory",prodcateroute);
+app.use("/api/blogcategory",blogcateroute);
+app.use("/api/brand",brandroute);
+app.use("/api/coupon",couponroute);
 app.use(notfound);
 app.use(errorhandle);
 

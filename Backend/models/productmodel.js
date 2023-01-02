@@ -44,7 +44,8 @@ var productSchema = new mongoose.Schema({
         postedby:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"User"
-        }}
+        },
+    comment:{type:String}}
     ],
     images:{
         type:Array,
@@ -52,6 +53,10 @@ var productSchema = new mongoose.Schema({
     color:{
         type:String,
         required:true
+    },
+    totalratings:{
+        type:String,
+        default:0
     }
 },{timestamps:true});
 

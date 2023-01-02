@@ -1,6 +1,10 @@
 const Product=require("../models/productmodel.js");
 const asynchandler=require("express-async-handler");
 const slugify=require("slugify");
+const User=require("../models/usermodel.js");
+const validatemongodb=require("../utils/validate_mongodb_id");
+const cloudinary=require("../config/cloudinary")
+const fs=require("fs");
 
 const createproduct=asynchandler(async(req,res)=>{
     try{
@@ -108,4 +112,90 @@ const getallproduct=asynchandler(async(req,res)=>{
         throw new Error(err);
     }
 });
-module.exports={createproduct,updateproduct,deleteproduct, getaproduct,getallproduct};
+
+const addtowishlist=asynchandler(async (req, res) => {
+    const {_id}=req.user;
+    const {prodid}=req.body;
+    validatemongodb(prodid);
+    try{
+        const user=await User.findById(_id);
+        const alreadyadded=user.wishlist.find((id)=>id.toString()===prodid);
+        if(alreadyadded){
+            let user=await User.findByIdAndUpdate(_id,{
+                $pull:{wishlist:prodid},
+            },{new:true});
+            res.json(user);
+        }else{
+            let user=await User.findByIdAndUpdate(_id,{
+                $push:{wishlist:prodid},
+            },{new:true});
+            res.json(user);
+        }
+
+    }catch(err){
+        throw new Error(err);
+    }
+});
+
+const ratings=asynchandler(async (req, res) => {
+    const {_id}=req.user;
+    const {star,prodid,comment}=req.body;
+   try{
+    const product=await Product.findById(prodid);
+    let alreadyrated=product.ratings.find((userId)=>userId.postedby.toString()===_id.toString());
+    if(alreadyrated){
+        const updaterating=await Product.updateOne(
+            
+               { ratings:{$elemMatch:alreadyrated}},
+                {$set:{"ratings.$.star":star,"ratings.$.comment":comment}},
+                {new:true}
+            
+        );
+    }else{
+        const rateproduct=await Product.findByIdAndUpdate(prodid,{
+            $push:{ratings:{
+                star:star,
+                comment:comment,
+                postedby:_id
+            }}
+        },{new:true});
+    }
+
+    const getallratings=await Product.findById(prodid);
+    let totalrating=getallratings.ratings.length;
+    let ratingsum=getallratings.ratings.map((item)=>item.star).reduce((prev,curr)=>prev+curr,0);
+    let actualrating=Math.round(ratingsum/totalrating);
+    let finalproduct=await Product.findByIdAndUpdate(prodid,{
+        totalratings:actualrating
+    },{new:true});
+
+    res.json(finalproduct)
+   }catch(err){
+    throw new Error(err);
+   }
+
+
+});
+
+const uploadimages=asynchandler(async(req,res)=>{
+    // console.log(req.files);
+    const {id}=req.params; //product id
+    validatemongodb(id);
+    try{
+        const uploader=(path)=>cloudinary(path,"images");
+        const urls=[];
+        const files=req.files;
+        for(const file of files){
+                const {path}=file;
+                const newpath=await uploader(path);
+                urls.push(newpath);
+                fs.unlinkSync(path);
+        }
+        const findproduct=await Product.findByIdAndUpdate(id,{images:urls.map((url)=>{return url})},{new:true});
+        res.json(findproduct);
+    }catch(err){
+        throw new Error(err);
+    }
+
+})
+module.exports={createproduct,uploadimages,ratings,addtowishlist,updateproduct,deleteproduct, getaproduct,getallproduct};
