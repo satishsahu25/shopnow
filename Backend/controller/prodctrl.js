@@ -113,30 +113,6 @@ const getallproduct=asynchandler(async(req,res)=>{
     }
 });
 
-const addtowishlist=asynchandler(async (req, res) => {
-    const {_id}=req.user;
-    const {prodid}=req.body;
-    validatemongodb(prodid);
-    try{
-        const user=await User.findById(_id);
-        const alreadyadded=user.wishlist.find((id)=>id.toString()===prodid);
-        if(alreadyadded){
-            let user=await User.findByIdAndUpdate(_id,{
-                $pull:{wishlist:prodid},
-            },{new:true});
-            res.json(user);
-        }else{
-            let user=await User.findByIdAndUpdate(_id,{
-                $push:{wishlist:prodid},
-            },{new:true});
-            res.json(user);
-        }
-
-    }catch(err){
-        throw new Error(err);
-    }
-});
-
 const ratings=asynchandler(async (req, res) => {
     const {_id}=req.user;
     const {star,prodid,comment}=req.body;
@@ -197,5 +173,29 @@ const uploadimages=asynchandler(async(req,res)=>{
         throw new Error(err);
     }
 
-})
-module.exports={createproduct,uploadimages,ratings,addtowishlist,updateproduct,deleteproduct, getaproduct,getallproduct};
+});
+const addtowishlist=asynchandler(async (req, res) => {
+  const {_id}=req.user;
+  const {prodid}=req.body;
+  validatemongodb(prodid);
+  try{
+      const user=await User.findById(_id);
+      const alreadyadded=user.wishlist.find((id)=>id.toString()===prodid);
+      if(alreadyadded){
+          let user=await User.findByIdAndUpdate(_id,{
+              $pull:{wishlist:prodid},
+          },{new:true});
+          res.json(user);
+      }else{
+          let user=await User.findByIdAndUpdate(_id,{
+              $push:{wishlist:prodid},
+          },{new:true});
+          res.json(user);
+      }
+
+  }catch(err){
+      throw new Error(err);
+  }
+});
+
+module.exports={createproduct,addtowishlist,uploadimages,ratings,updateproduct,deleteproduct, getaproduct,getallproduct};
