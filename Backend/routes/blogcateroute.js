@@ -8,6 +8,6 @@ router.post("/",authmiddle,isadmin,createblogcategory);
 router.delete("/:id",authmiddle,isadmin,deleteblogcategory);
 router.put("/:id",authmiddle,isadmin,updateblogcategory);
 router.get("/:id",authmiddle,isadmin,getblogcategory);
-router.get("/",authmiddle,isadmin,getallblogcategory);
+router.get("/",getallblogcategory);
 
 module.exports=router;

@@ -8,6 +8,6 @@ router.post("/",authmiddle,isadmin,createbrand);
 router.delete("/:id",authmiddle,isadmin,deletebrand);
 router.put("/:id",authmiddle,isadmin,updatebrand);
 router.get("/:id",authmiddle,isadmin,getbrand);
-router.get("/",authmiddle,isadmin,getallbrand);
+router.get("/",getallbrand);
 
 module.exports=router;

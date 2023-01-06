@@ -14,12 +14,14 @@ const prodcateroute=require("./routes/prodcategoryroutes");
 const blogcateroute=require("./routes/blogcateroute");
 const brandroute=require("./routes/brandroutes");
 const couponroute=require("./routes/couponroutes");
+const cors=require('cors');
 
 db();
 app.use(morgan("dev"));
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:false}));
 app.use(cookieparser());
+app.use(cors());
 // app.use("/",(req,res)=>{
 //     res.send("Hello from erver side")
 // })

@@ -8,6 +8,6 @@ router.post("/",authmiddle,isadmin,createproductcategory);
 router.delete("/:id",authmiddle,isadmin,deleteproductcategory);
 router.put("/:id",authmiddle,isadmin,updateproductcategory);
 router.get("/:id",authmiddle,isadmin,getproductcategory);
-router.get("/",authmiddle,isadmin,getallproductcategory);
+router.get("/",getallproductcategory);
 
 module.exports=router;

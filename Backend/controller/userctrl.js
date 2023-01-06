@@ -60,27 +60,38 @@ const loginadmin= asynchandler(async (req, res) => {
   const { email, password } = req.body;
   // console.log(email,password);
   const adminfind = await User.findOne({ email: email });
-  if(adminfind.role!=="admin") throw new Error("Not authorized admin");
-  if (adminfind && (await adminfind.isPasswordMatched(password))) {
-    const refreshtoken=await generaterefreshtoken(adminfind?._id);
-    const updateuser=await User.findByIdAndUpdate(adminfind?._id,{
-      refreshtoken:refreshtoken
-    },{new:true});
-    res.cookie("refreshtoken",refreshtoken,{
-      httpOnly:true,
-      maxAge:72*60*60*1000
+  if(adminfind){
+    if(adminfind.role!=="admin") throw new Error("Not authorized admin");
+    if (adminfind && (await adminfind.isPasswordMatched(password))) {
+      const refreshtoken=await generaterefreshtoken(adminfind?._id);
+      const updateuser=await User.findByIdAndUpdate(adminfind?._id,{
+        refreshtoken:refreshtoken
+      },{new:true});
+      res.cookie("refreshtoken",refreshtoken,{
+        httpOnly:true,
+        maxAge:72*60*60*1000
+      })
+  
+      res.json({
+        user:{id: adminfind?._id,
+        firstname: adminfind?.firstname,
+        lastname: adminfind?.lastname,
+        email: email,
+        mobile: adminfind?.mobile,
+        token: generatetoken(adminfind?._id),},
+        msg:"Admin Login success"
+      });
+    }else{
+      return res.status(400).json({
+        user:null,
+        msg:"Invalid credentials"
+      })
+    }
+  }else {
+    return res.json({
+      user:null,
+      msg:"No admin found"
     })
-
-    res.json({
-      id: adminfind?._id,
-      firstname: adminfind?.firstname,
-      lastname: adminfind?.lastname,
-      email: email,
-      mobile: adminfind?.mobile,
-      token: generatetoken(adminfind?._id),
-    });
-  } else {
-    throw new Error("Invalid credentials");
   }
 });
 
