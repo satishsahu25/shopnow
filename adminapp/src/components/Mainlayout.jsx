@@ -13,10 +13,13 @@ import {
   AiOutlineUser,
   AiOutlineShoppingCart,
 } from "react-icons/ai";
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from "react-router-dom";
 import { SiBrandfolder } from "react-icons/si";
 import { BiCategoryAlt } from "react-icons/bi";
 import { FaClipboardList } from "react-icons/fa";
+import{RiCouponLine} from 'react-icons/ri'
 import { Outlet } from "react-router-dom";
 import { IoIosNotifications } from "react-icons/io";
 import {Link} from 'react-router-dom'
@@ -110,6 +113,24 @@ const Mainlayout = () => {
               key: "orders",
               icon: <FaClipboardList />,
               label: "Orders",
+            },
+            {
+              key: "marketing",
+              icon: <RiCouponLine />,
+              label: "Marketing",
+              children: [
+                {
+                  key: "addcoupon",
+                  icon: <RiCouponLine />,
+                  label: "Add Coupon",
+                },
+                {
+                  key: "couponlist",
+                  icon: <RiCouponLine />,
+                  label: "Coupon List",
+                },
+               
+              ],
             },
             {
               key: "blogs",
@@ -221,6 +242,18 @@ const Mainlayout = () => {
             background: colorBgContainer,
           }}
         >
+          <ToastContainer 
+          position="top-right"
+          autoClose={250}
+          hideProgressBar={false}
+          newestOnTop={true}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+         
+          theme="light"
+          />
           <Outlet />
         </Content>
       </Layout>

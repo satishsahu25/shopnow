@@ -8,7 +8,7 @@ import colorreducer from '../features/colors/colorslice'
 import blogreducer from '../features/blogs/blogslice'
 import blogcatereducer from '../features/bcategory/bcateslice'
 import enquiryreducer from '../features/enquiry/enquiryslice'
-
+import couponreducer from '../features/coupon/couponslice'
 export const store=configureStore({
     reducer:{
         auth:authreducer,
@@ -19,6 +19,8 @@ export const store=configureStore({
         color:colorreducer,
         blog:blogreducer,
         blogcategories:blogcatereducer,
-        enquiries:enquiryreducer
+        enquiries:enquiryreducer,
+        coupon:couponreducer
+       
     }
 });

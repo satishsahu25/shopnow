@@ -27,12 +27,10 @@ var blogSchema = new mongoose.Schema({
     type:mongoose.Types.ObjectId,
     ref:'User'
   }],
-  images:{
-    type:Array
-  },
+  images:[],
   author:{
     type:String,
-    default:"admin"
+    default:"Admin"
   }
 },{
     toJSON:{virtuals:true},

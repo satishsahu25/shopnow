@@ -1,9 +1,14 @@
 const express=require('express');
 const router=express.Router();
-const {createuser,updateorderstatus,getorders,createorder,applycoupon,usercart,emptycart,getusercart,saveaddress,getwishlist,loginadmin,resetpassword,forgotpasswordtoken,updatepassword,loginuser,logout,blockuser,unblockuser,updateuser,getalluser,singleuser,deleteuser}=require('../controller/userctrl')
+const {createuser,alluserorders,
+    updateorderstatus,getorders,
+    createorder,applycoupon,
+    usercart,emptycart,getusercart,
+    saveaddress,getwishlist,loginadmin,
+    resetpassword,forgotpasswordtoken,updatepassword,
+    loginuser,logout,blockuser,unblockuser,updateuser,
+    getalluser,singleuser,deleteuser}=require('../controller/userctrl')
 const {authmiddle,isadmin}=require('../middlewares/authmiddleware');
-
-
 router.post("/register",createuser);
 // router.get("/refresh",handlerefreshtoken)
 router.post("/login",loginuser);
@@ -18,7 +23,10 @@ router.get("/cart",authmiddle,getusercart);
 router.post("/cart/coupon",authmiddle,applycoupon);
 router.put("/saveaddress",authmiddle,saveaddress);
 router.post("/cart/cashorder",authmiddle,createorder);
+
 router.get("/order",authmiddle,getorders);
+router.get("/allorders",authmiddle,isadmin,alluserorders);
+
 router.put("/updateorder/:id",authmiddle,isadmin,updateorderstatus);
 router.get("/allusers",getalluser);
 router.get("/:id",authmiddle,isadmin,singleuser);

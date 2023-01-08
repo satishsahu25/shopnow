@@ -443,8 +443,16 @@ const getorders=asynchandler(async(req,res)=>{
   const {_id}=req.user;
   validatemongodb(_id);
   try{
-    const userorders=await Order.findOne({orderby:_id}).populate('products.product').exec();
+    const userorders=await Order.findOne({orderby:_id}).populate('products.product orderby').exec();
     res.json(userorders);
+  }catch(err){
+    throw new Error(err);
+  }
+});
+const alluserorders=asynchandler(async(req,res)=>{
+  try{
+    const allorders=await Order.find().populate('products.product orderby').exec();
+    res.json(allorders);
   }catch(err){
     throw new Error(err);
   }
@@ -467,4 +475,4 @@ const updateorderstatus=asynchandler(async(req,res)=>{
  }
 });
 
-module.exports = { createuser,getorders,updateorderstatus,createorder,applycoupon,emptycart,getusercart,usercart,saveaddress,getwishlist,loginadmin,resetpassword,forgotpasswordtoken,updatepassword,logout,handlerefreshtoken, blockuser,unblockuser,loginuser, updateuser,getalluser, singleuser ,deleteuser};
+module.exports = { alluserorders,createuser,getorders,updateorderstatus,createorder,applycoupon,emptycart,getusercart,usercart,saveaddress,getwishlist,loginadmin,resetpassword,forgotpasswordtoken,updatepassword,logout,handlerefreshtoken, blockuser,unblockuser,loginuser, updateuser,getalluser, singleuser ,deleteuser};

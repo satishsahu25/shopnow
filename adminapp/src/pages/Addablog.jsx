@@ -1,39 +1,77 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Custominput from "../components/Custominput";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 // import { Stepper } from 'react-form-stepper';
-import { InboxOutlined } from '@ant-design/icons';
-import { message, Upload } from 'antd';
-const { Dragger } = Upload;
-const props = {
-  name: 'file',
-  multiple: true,
-  action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== 'uploading') {
-      console.log(info.file, info.fileList);
-    }
-    if (status === 'done') {
-      message.success(`${info.file.name} file uploaded successfully.`);
-    } else if (status === 'error') {
-      message.error(`${info.file.name} file upload failed.`);
-    }
-  },
-  onDrop(e) {
-    console.log('Dropped files', e.dataTransfer.files);
-  },
-};
-
-
-
+import Dropzone from "react-dropzone";
+import { delImg, uploadImg } from "../features/upload/uploadslice";
+import { toast } from "react-toastify";
+import { useFormik } from "formik";
+import { useDispatch, useSelector } from "react-redux";
+import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import { createBlog } from "../features/blogs/blogslice";
+import { getblogCategories } from "../features/bcategory/bcateslice";
+import { resetState } from "../features/blogs/blogslice";
+let schema = Yup.object().shape({
+  title: Yup.string().required("Title is required"),
+  description: Yup.string().required("Description is required"),
+  category: Yup.string().required("Category is required"),
+});
 
 const Addablog = () => {
-  const [desc, setdesc] = useState();
-  const handledesc = (e) => {
-    setdesc(e);
-  };
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const [images, setimages] = useState([]);
+
+  useEffect(() => {
+    dispatch(getblogCategories());
+  }, []);
+
+  const imgstate = useSelector((state) => state.upload.images);
+  const blogstate=useSelector((state)=>state.blog);
+  const bcatestate=useSelector((state)=>state.blogcategories);
+  const {isSuccess,isError,isLoading,createdblog}=blogstate;
+  useEffect(() => {
+    if(isSuccess&&createdblog){
+      toast.success("Blog added successfully", {});
+    }
+    if(isError){
+      toast.error("Something went wrong",{});
+
+    }
+
+  },[isSuccess,isError,isLoading,]);
+
+  const img = [];
+  imgstate.forEach((i) => {
+    img.push({
+      public_id: i.public_id,
+      url: i.iurl,
+    });
+  });
+
+  useEffect(() => {
+    formik.values.images = img;
+  }, [img]);
+
+  const formik = useFormik({
+    initialValues: {
+      title: "",
+      description: "",
+      category: "",
+      images: "",
+    },
+    validationSchema: schema,
+    onSubmit: (values) => {
+      dispatch(createBlog(values));
+      formik.resetForm();
+      setTimeout(() => {
+        dispatch(resetState());
+        // navigate("/admin/bloglist");
+      }, 3000); // 3sec
+    },
+  });
   return (
     <div>
       <h3 className="mb-4 title">Add Blog</h3>
@@ -42,33 +80,95 @@ const Addablog = () => {
   activeStep={1}
 /> */}
       <div className="">
-        <form action="">
-          <Custominput type="text" placeholder="Title" />
-          <select name="" id="" className="form-control py-3 mb-3">
-            <option value="">Select Blog Category</option>
-          </select>
-          <ReactQuill
-            theme="snow"
-            value={desc}
-            onChange={(evt) => {
-              handledesc(evt.target.value);
-            }}
+        <form 
+        onSubmit={formik.handleSubmit}
+        className="d-flex gap-3 flex-column"
+        action="">
+             {/* blog title */}
+             <Custominput
+            type="text"
+            placeholder="Title"
+            name="title"
+            onCh={formik.handleChange("title")}
+            onBl={formik.handleChange("title")}
+            val={formik.values.title}
           />
-          <div className="mt-3 mb-3">
-          <Dragger {...props}>
-    <p className="ant-upload-drag-icon">
-      <InboxOutlined />
-    </p>
-    <p className="ant-upload-text">Click or drag file to this area to upload</p>
-    <p className="ant-upload-hint">
-      Support for a single or bulk upload. Strictly prohibit from uploading company data or other
-      band files
-    </p>
-  </Dragger>
+           <div className="error">
+              {formik.touched.title && formik.errors.title}
+            </div>
+
+            {/* blog catgeory */}
+          <select 
+            name="category"
+            id=""
+            onCh={formik.handleChange("category")}
+            onBl={formik.handleChange("category")}
+            className="form-control py-3 mb-3"
+            value={formik.values.category}
+          >
+            <option value="">Select Blog Category</option>
+             {bcatestate.map((i, j) => {
+              return (
+                <option key={j} value={i.title}>
+                  {i.title}
+                </option>
+              );
+            })}
+          </select>
+          <div className="error">
+            {formik.touched.category && formik.errors.category}
           </div>
-          <button type="submit" className="my-5 border-0 rounded-3 btn btn-success">Add Blog</button>
+
+          {/* description */}
+          <div className="mb-3">
+            <ReactQuill
+              theme="snow"
+              name="description"
+              value={formik.values.description}
+              onChange={formik.handleChange("description")}
+              className="mt-3"
+            />
+            <div className="error">
+              {formik.touched.description && formik.errors.description}
+            </div>
+          </div>
+          {/* images */}
+          <div className="bg-white border-1 p-5 text-center mt-3">
+            <Dropzone
+              onDrop={(acceptedfiles) => dispatch(uploadImg(acceptedfiles))}
+            >
+              {({ getRootProps, getInputProps }) => {
+                <section>
+                  <div {...getRootProps}>
+                    <input {...getInputProps} />
+                    <p>Drag 'n' drop some images here ort click to select</p>
+                  </div>
+                </section>;
+              }}
+            </Dropzone>
+          </div>
+          <div className="showimages d-flex flex-wrap gap-3">
+            {imgstate?.map((i, j) => {
+              return (
+                <div className="position-relative" key={j}>
+                  <button
+                    type="button"
+                    onClick={() => dispatch(delImg(i.public_id))}
+                    className="btn-close position-absolute"
+                    style={{ top: "10px", right: "10px" }}
+                  ></button>
+                  <img src={i.url} alt="" width={200} height={200} />
+                </div>
+              );
+            })}
+          </div>
+          <button
+            type="submit"
+            className="my-5 border-0 rounded-3 btn btn-success"
+          >
+            Add Blog
+          </button>
         </form>
-        
       </div>
     </div>
   );

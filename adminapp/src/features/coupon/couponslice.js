@@ -1,75 +1,73 @@
 import {createSlice,createAction,createAsyncThunk} from '@reduxjs/toolkit'
-import colorService from './colorservice'
+import couponService from './couponservice'
 
 
-export const getColors=createAsyncThunk('color',async(thunkAPI)=>{
+export const getallcoupons=createAsyncThunk('coupons',async(thunkAPI)=>{
     try{
-        return await colorService.getColors();
+        return await couponService.getallcoupons();
     }catch(err){
         return thunkAPI.rejectWithValue(err);
     }
 });
 
-export const createColor=createAsyncThunk('color/createcolor',
-                async(colorsData,thunkAPI)=>{
+export const createCoupon=createAsyncThunk('coupon/allcoupons',
+                async(couponData,thunkAPI)=>{
                     try{
-                        return await colorService.createColor(colorsData);
+                        return await couponService.createCoupon(couponData);
                     }catch(err){
                         return thunkAPI.rejectWithValue(err);
                     }
                 }
 )
 const initialState={
-    colors:[],
+    coupons:[],
     isError:false,
     isLoading:false,
     isSuccess:false,
     message:""
 }
 
-export const resetState=createAction('Reset_all');
+export const resetState=createAction('Reset_all')
 
-export const colorSlice=createSlice({
-    name:"colors",
+export const brandSlice=createSlice({
+    name:"brands",
     initialState,
-    reducers:{
-       
-    },
+    reducers:{},
     extraReducers:(builder)=>{
-        builder.addCase(getColors.pending,(state)=>{
+        builder.addCase(getallcoupons.pending,(state)=>{
             state.isLoading=true;
         })
-        .addCase(getColors.fulfilled,(state,action)=>{
+        .addCase(getallcoupons.fulfilled,(state,action)=>{
             state.isLoading=false;
             state.isSuccess=true;
             state.isError=false;
-            state.colors=action.payload;  
+            state.coupons=action.payload;  
         })
-        .addCase(getColors.rejected,(state,action)=>{
+        .addCase(getallcoupons.rejected,(state,action)=>{
             state.isLoading=false;
             state.isSuccess=false;
             state.isError=true;
             state.message=action.error;  
         })
-        .addCase(createColor.pending,(state)=>{
+        .addCase(createCoupon.pending,(state)=>{
             state.isLoading=true;
         })
-        .addCase(createColor.fulfilled,(state,action)=>{
+        .addCase(createCoupon.fulfilled,(state,action)=>{
             state.isLoading=false;
             state.isSuccess=true;
             state.isError=false;
-            state.createdColor=action.payload;  
+            state.createdcoupon=action.payload;  
         })
-        .addCase(createColor.rejected,(state,action)=>{
+        .addCase(createCoupon.rejected,(state,action)=>{
             state.isLoading=false;
             state.isSuccess=false;
             state.isError=true;
             state.message=action.error;  
         })
-        .addCase(resetState,()=>initialState);
+        .addCase(resetState,()=>initialState)
         
     },
 });
 
 
-export default colorSlice.reducer;
+export default brandSlice.reducer;
