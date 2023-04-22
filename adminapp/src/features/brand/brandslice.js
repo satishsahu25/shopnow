@@ -2,14 +2,14 @@ import {createSlice,createAction,createAsyncThunk} from '@reduxjs/toolkit'
 import brandService from './brandservice'
 
 
-export const getBrands=createAsyncThunk('brand',async(thunkAPI)=>{
+export const getBrands=createAsyncThunk('brand/getbrands',async(thunkAPI)=>{
     try{
         return await brandService.getBrands();
     }catch(err){
         return thunkAPI.rejectWithValue(err);
     }
 });
-export const getBrand=createAsyncThunk('brand',async(brandid,thunkAPI)=>{
+export const getBrand=createAsyncThunk('brand/getbrand',async(brandid,thunkAPI)=>{
     try{
         return await brandService.getBrand(brandid);
     }catch(err){
@@ -17,14 +17,14 @@ export const getBrand=createAsyncThunk('brand',async(brandid,thunkAPI)=>{
     }
 });
 
-export const updateBrand=createAsyncThunk('updatebrand',async(brandid,thunkAPI)=>{
+export const updateBrand=createAsyncThunk('brand/updatebrand',async(brandid,thunkAPI)=>{
     try{
         return await brandService.updateBrand(brandid);
     }catch(err){
         return thunkAPI.rejectWithValue(err);
     }
 });
-export const deleteBrand=createAsyncThunk('deletebrand',async(brandid,thunkAPI)=>{
+export const deleteBrand=createAsyncThunk('delete/deletebrand',async(brandid,thunkAPI)=>{
     try{
         return await brandService.deleteBrand(brandid);
     }catch(err){

@@ -2,7 +2,7 @@ import { createSlice, createAction, createAsyncThunk } from "@reduxjs/toolkit";
 import productcategoriesService from "./pcatgeoryservice";
 
 export const getproductCategories = createAsyncThunk(
-  "brand",
+  "get/productcate",
   async (thunkAPI) => {
     try {
       return await productcategoriesService.getproductCategories();
@@ -12,16 +12,16 @@ export const getproductCategories = createAsyncThunk(
   }
 );
 export const createProductcate = createAsyncThunk(
-  "productcategory",
-  async (productcateata, thunkAPI) => {
+  "create/productcategory",
+  async (productcatedata, thunkAPI) => {
     try {
-      return await productcategoriesService.createProductcate(productcateata);
+      return await productcategoriesService.createProductcate(productcatedata);
     } catch (err) {
       return thunkAPI.rejectWithValue(err);
     }
   }
 );
-export const getProductcate=createAsyncThunk('productcate',async(productcateid,thunkAPI)=>{
+export const getProductcate=createAsyncThunk('get/roductcate',async(productcateid,thunkAPI)=>{
     try{
         return await productcategoriesService.getProductcate(productcateid);
     }catch(err){
@@ -29,14 +29,14 @@ export const getProductcate=createAsyncThunk('productcate',async(productcateid,t
     }
 });
 
-export const updateProductcate=createAsyncThunk('updateproductcate',async(productcateid,thunkAPI)=>{
+export const updateProductcate=createAsyncThunk('update/updateproductcate',async(productcateid,thunkAPI)=>{
     try{
         return await productcategoriesService.updateProductcate(productcateid);
     }catch(err){
         return thunkAPI.rejectWithValue(err);
     }
 });
-export const deleteProductcate=createAsyncThunk('deleteproductcate',async(productcateid,thunkAPI)=>{
+export const deleteProductcate=createAsyncThunk('delete/deleteproductcate',async(productcateid,thunkAPI)=>{
     try{
         return await productcategoriesService.deleteProductcate(productcateid);
     }catch(err){

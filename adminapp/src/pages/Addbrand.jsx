@@ -20,6 +20,7 @@ const Addbrand = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+  console.log(location)
   const getbrandid = location.pathname.split("/")[3];
   const newBrand = useSelector((state) => state.brand);
   const {
@@ -84,10 +85,10 @@ const Addbrand = () => {
           <Custominput
             type="text"
             placeholder="Brand"
-            name="brand"
-            id="brand"
-            onCh={formik.handleChange("brand")}
-            onBl={formik.handleChange("brand")}
+            name="title"
+            id="title"
+            onCh={formik.handleChange("title")}
+            onBl={formik.handleChange("title")}
             val={formik.values.title}
           />
           <div className="error">
@@ -97,7 +98,7 @@ const Addbrand = () => {
             type="submit"
             className="my-5 border-0 rounded-3 btn btn-success"
           >
-            {getbrandid !== undefined ? "Edit" : "Add"} Brands
+            {getbrandid !== undefined ? "Edit" : "Add"} Brand
           </button>
         </form>
       </div>

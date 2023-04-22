@@ -21,6 +21,7 @@ const updateBrand = async (brand) => {
 };
 const createBrand=async(branddata)=>{
     const response=await axios.post(`${baseurl}brand`,branddata,headerconfig);
+     console.log(response.data);
     return response.data;
 };
 const deleteBrand=async(brandid)=>{

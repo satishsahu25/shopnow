@@ -1,7 +1,7 @@
 import { createSlice, createAction, createAsyncThunk } from "@reduxjs/toolkit";
 import blogService from "./blogservice";
 
-export const getBlogs = createAsyncThunk("blog", async (thunkAPI) => {
+export const getBlogs = createAsyncThunk("blog/getblogs", async (thunkAPI) => {
   try {
     return await blogService.getBlogs();
   } catch (err) {
